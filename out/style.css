@@ -1,0 +1,33 @@
+.app .item {
+  outline: solid 1px;
+}
+.app .item .description {
+  font-size: 2.2em;
+}
+.app .item .details {
+  display: flex;
+}
+.app .item .style {
+  text-align: left;
+}
+.app .item .data {
+  display: flex;
+  align-items: baseline;
+}
+.app .item .data td {
+  text-align: right;
+  margin: 10px 15px 0px 15px;
+  padding: 0px 10px 0px 10px;
+  flex: 3;
+}
+.app .item .data th {
+  text-align: right;
+  margin: 10px 15px 0px 15px;
+  flex: 1;
+}
+.app .item .property {
+  outline: dashed 1px #c0c0c0;
+}
+.app .sales {
+  color: #f00;
+}

@@ -1,0 +1,169 @@
+let Data = React.createClass({
+  render() {
+    let items = window.ITEMS;
+
+    let department = _.groupBy(items, i => i.departmentName);
+    let colorByDepartment = _.groupBy(department, i => i.colorDesc);
+
+    let filtered = _(items)
+      .filter(i => {return {i}})
+      // .filter(i => i.colorDesc == "BLK")
+      // .filter(i => i.departmentName==="Blazers")
+      // .filter(i => i.styleColor == "004006546 030")
+
+<<<<<<< HEAD
+    let WTDSales = _.sum(item, i => i.WTDSales)
+    console.log(WTDSales);
+=======
+    let groups = ["flowCode", "departmentName"]
+    let grouped = _(filtered)
+      .groupBy(i => i[groups[0]])
+      .mapValues(a => _(a)
+        .groupBy(i => i[groups[1]])
+        .mapValues(a => _(a)).value())
+      .value()
+>>>>>>> 0a4d258f2f8b2221ea0124f47ea05a98abf4609c
+
+
+    // let reduced = _(filtered)
+    //   .reduce((memo, i) => memo + i.WTDSales, 0)
+    // console.log(reduced);
+
+<<<<<<< HEAD
+    let groupBy = _(item)
+      .groupBy(i => i.flowCode)
+      .mapValues(byFlowCode => _(byFlowCode)
+        .groupBy(i => i.departmentName)
+        .mapValues(byDepartmentName => _(byDepartmentName)
+          .groupBy(i => i.styleDesc)
+          .mapValues(byStyle => _(byStyle)
+            .groupBy(i => i.styleColor)
+            // .mapValues(i => i.styleColor )
+            .mapValues(byStyleColor => _(byStyleColor)
+            .value())
+          .value())
+        .value())
+      .value())
+    .value();
+=======
+    // let groupBy = _(filtered)
+    //   .groupBy(i => i.flowCode)
+    //   .mapValues(byFlowCode => _(byFlowCode)
+    //     .groupBy(i => i.departmentName)
+    //     .mapValues(byDepartmentName => _(byDepartmentName)
+    //       .groupBy(i => i.styleDesc)
+    //       .mapValues(byStyle => _(byStyle)
+    //       .sortBy(i => i.colorCode)
+    //         .map(i => {return `${i.styleDesc} ${i.colorDesc}`} )
+    //         // .mapValues(byStyleColor => _(byStyleColor)
+    //         // .value())
+    //       .value())
+    //     .value())
+    //   .value())
+    // .value();
+>>>>>>> 0a4d258f2f8b2221ea0124f47ea05a98abf4609c
+
+    WTDSales = _.sum(groupBy, i => i.WTDSales);
+    console.log(WTDSales);
+
+    // let { items, filter } = this.state;
+    // let criteria = _.map([filter], ([property, value]) =>
+    //   item => item[property] === value);
+    // console.log({criteria});
+    // items = _.foldr(criteria, (items, criterion) =>
+    //   items.filter(criterion), _(items)).value();
+    // console.log(items);
+
+    let WTDSalesByDepartment = _(filtered)
+      .groupBy(i => i.departmentName)
+      .mapValues(byDepartmentName => _(byDepartmentName)
+        // .map(i => {
+        //   return (
+        //     { WTDSales: i.WTDSales,
+        //       plan: i.planAPS}
+        //   )})
+        .sum(i => i.WTDSales)
+        // .value()
+      ).value()
+
+
+    let aggregateProperties = [
+      {property: "WTDSales", agg: "sum"},
+      {property: "planAPS", agg: ""},
+      {property: "committedInventory", agg: ""},
+      {property: "tota", agg: ""}
+      ]
+
+<<<<<<< HEAD
+    let blah = _(item)
+      .groupBy(i => i.departmentName)
+      .mapValues(byDepartmentName => _(byDepartmentName)
+      ).value()
+=======
+    let blah = _(filtered)
+      .groupBy(i => i.departmentName)
+      .mapValues(byDepartmentName => _(byDepartmentName)
+        .value())
+      .value();
+>>>>>>> 0a4d258f2f8b2221ea0124f47ea05a98abf4609c
+
+
+
+    // let _WTDSales = _(filtered)
+    //   .groupBy(i => i.flowCode)
+    //   .mapValues(byFlowCode => _(byFlowCode)
+    //     .sum(i => i.WTDSales))
+        // .groupBy(i => i.Style)
+        // .mapValues(byStyleColor => _(byStyleColor)
+          // .value())
+      // .value();
+      // _.sum(i, value => value.WTDSales))
+
+    let _WTDSales = _(grouped).mapValues(i=>i.WTDSales)//.sum(i=>i.WTDSales);
+    // let _WTDSales = _(grouped)
+    //   .map(g => g.WTDSales)
+    //   .sum(g => g)
+    //   // .value();
+
+
+
+
+
+
+    let AvgSales = _.sum(grouped, i=> i.WTDSales) / _.size(grouped, i=>i);
+    let AvgCommitted = _.sum(grouped, i=>i.committedInventory / i.storesWithInventory);
+    let GrossMarginDollars = _.sum(grouped, i=>i.retailPrice) - _.sum(grouped, i=>i.unitCost);
+    let GrossMarginPercent = GrossMarginDollars / _.sum(grouped, i=>i.retailPrice);
+
+
+
+
+        // <DisplayData data={WTDSalesByDepartment} title={"WTDSalesByDepartment"} />
+    return (
+      <div className="uk-grid uk-grid-1-10 uk-container-center">
+<<<<<<< HEAD
+        <DisplayData data={WTDSalesByDepartment} title={"WTDSalesByDepartment"} />
+        <DisplayData data={groupBy} title={"groupBy"} />
+=======
+        <DisplayData data={grouped} title={"grouped"} />
+        <DisplayData data={_WTDSales} title={"WTDSales"} />
+>>>>>>> 0a4d258f2f8b2221ea0124f47ea05a98abf4609c
+      </div>
+    );
+  }
+});
+
+let DisplayData = React.createClass({
+  render() {
+    let { data, title } = this.props;
+    return (
+      <div>
+        <div>{title}</div>
+        <pre>{JSON.stringify(data, null, 2)}</pre>
+      </div>
+    );
+  }
+});
+
+React.render(<Data />,
+  document.getElementById("data"));

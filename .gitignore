@@ -1,0 +1,11 @@
+# output
+/lib
+
+# stack garbage
+*.sublime-workspace
+npm-debug.log
+
+# dependencies
+/node_modules
+
+nodemon.json

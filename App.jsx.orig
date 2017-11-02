@@ -1,0 +1,221 @@
+// groups data set by an array of groupings, state.groups
+
+function nest(seq, keys) {
+  // console.log(seq);
+  if (!keys.length)
+    return seq;
+  var first = keys[0];
+  var rest = keys.slice(1);
+  return _.mapValues(_.groupBy(seq, first), function (value) {
+    return nest(value, rest)
+  });
+};
+
+// traverses the data set using index of state.currentGrouping
+// as the depth, and value as the index of the current group's keys
+function traverse(seq, data) {
+  return _.reduce(seq, (memo, val, index) => {
+    let keys = _.keys(memo);
+    return memo[keys[val]];
+  }, data)
+};
+
+let App = React.createClass({
+
+  getInitialState() {
+    return {
+      items: window.ITEMS,
+      groups: ["season", "category", "item", "sku"],
+      currentGrouping: [3, 1],
+      filters: [],
+      exclusions: [],
+      currentSort: "WTDSales",
+    }
+  },
+
+  filterItems() {
+    let items = this.state.items;
+    let filters = this.state.filters;
+    return items;
+    if (filters.length) {
+      // console.log(filters);
+      return (
+        _(items)
+          .filters( i => i.season === filter[0] )
+        );
+    }
+    return items;
+  },
+
+
+  groupItems() {
+    let items = this.filterItems();
+    let grouping = this.state.groups.slice(0, this.state.currentGrouping.length);
+    let currentGroup = _.first(grouping);
+    return nest(items, grouping)
+  },
+
+  displayItems() {
+    return traverse(this.state.currentGrouping, this.groupItems())
+  },
+
+  handleArrows(event) {
+    event.preventDefault();
+    // console.log(event.type, event.which, event.timeStamp, event.keyCode);
+    let groups = this.state.groups;
+    let localGrouping = this.state.currentGrouping;
+    let currentIndex = _.last(localGrouping);
+    // this.traverse();
+    switch(event.keyCode) {
+      case 37:
+        // console.log("left");
+        if ( localGrouping.length !== 1 ) {
+          localGrouping.pop();
+          this.setState({ currentGrouping: localGrouping })
+        };
+        break;
+      case 39:
+        // console.log("right");
+        if (localGrouping.length < this.state.groups.length) {
+          localGrouping.push(0);
+          this.setState({ currentGrouping: localGrouping })
+        };
+        break;
+      case 38:
+        // console.log("up");
+        if (currentIndex > 0) {
+          localGrouping.pop();
+          localGrouping.push(currentIndex - 1)
+          this.setState( {currentGrouping: localGrouping} )};
+        break;
+      case 40:
+        // console.log("down");
+        if (currentIndex < 10) {
+          localGrouping.pop();
+          localGrouping.push(currentIndex + 1)
+          this.setState( {currentGrouping: localGrouping} )};
+        break;
+      default:
+        // console.log("?");
+        break;
+    }
+  },
+
+  renderParent(description) {
+<<<<<<< HEAD
+      let parentIndex = _.size(_.initial(this.state.currentGrouping)) - 1;
+      let parent = [];
+      let parentKeys = [];
+      console.log("parentIndex:", parentIndex);
+      if (parentIndex !== 0) {
+        parent = traverse([parentIndex], this.groupItems());
+      }
+      else {
+        parent = this.groupItems();
+        parentKeys = _.keys(parent);
+      };
+      parentKeys = _.keys(parent);
+      console.log(_.keys(parent));
+      console.log(parent);
+=======
+      let parentIndex = this.state.currentGrouping.length - 2;
+      let parent = traverse(_.initial(this.state.currentGrouping), this.groupItems());
+      let parentKeys = _.keys(traverse(_.initial(this.state.currentGrouping), this.groupItems()));
+      console.log(_.last(this.state.currentGrouping));
+>>>>>>> bb5646e101d000ed4132939575894924077adff2
+      return (
+        <Parent
+          description={description}
+          keys={parentKeys}
+          parent={parent} />
+      );
+  },
+
+  // renderLens(items, description) {
+  //   let grouping = this.state.groups.slice(0, this.state.currentGrouping.length)
+  //   return (
+  //     <div>
+  //       <Lens
+  //         items={items}
+  //         description={description[groupingx]} />
+  //     </div>
+  //     );
+  // },
+
+  renderChildren(description, childrenIndex) {
+  },
+
+  render() {
+    let items = this.displayItems();
+    let grouping = this.state.currentGrouping;
+    let description = {
+      sku: items[0].itemDesc + " - " + items[0].colorDesc + " - " + items[0].sku,
+      item: items[0].itemDesc + " - " + items[0].item,
+      category: items[0].category,
+      season: items[0].season,
+      };
+
+    let lens = items;
+    let lensIndex = this.state.groups[this.state.currentGrouping.length - 1];
+    let parentIndex = this.state.groups[this.state.currentGrouping.length - 2];
+    let childrenIndex = this.state.groups[this.state.currentGrouping.length];
+
+    return (
+      <div className="uk-container uk-container-center"
+        onKeyDown={this.handleArrows}>
+        <div className="uk-grid">
+          <div className="parent uk-width-1-6">
+            {this.renderParent(description[this.state.groups[this.state.currentGrouping.length - 2]])}
+          </div>
+          <div className="lens uk-width-4-6">
+            <Lens
+              items={items}
+              description={description[lensIndex]} />
+          </div>
+          <div className="children uk-width-1-6">
+            {this.renderChildren(description[childrenIndex], childrenIndex)}
+          </div>
+        </div>
+      </div>
+      );
+
+  },
+});
+
+
+let Parent = React.createClass({
+  render() {
+    let { description, keys, parent } = this.props;
+    let listClass = "";
+    return (
+      <div className="parent">
+        <h2>{description}</h2>
+        {keys.map((v, i) =>
+          // TODO WH: implement parent/parent-sibling className for li to style parent
+          // if (description === v) {listClass = "parent"} else {listClass = "parent"};
+          // if this.state.currentGrouping[index[value]] === i
+          <ul className="uk-list">
+            <li className={"parent"} key={i}>{v}</li>
+          </ul>
+          )}
+
+      </div>
+      );
+  },
+})
+
+// let Lens = React.createClass({
+//   render() {
+//     let { lens, description } = this.props;
+//     console.log("lens", lens);
+//     return (
+//       <div>
+//         {description}
+//       </div>
+//     );
+//   }
+// })
+
+
+React.render(<App />,
+  document.getElementById("app"));
